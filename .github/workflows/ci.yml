@@ -8,13 +8,8 @@ name: Continuous Integration
 
 jobs:
   ci:
-    name: Test PHP ${{ matrix.php-version }}
+    name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version:
-          - '8.4'
-          - '8.5'
 
     steps:
       - uses: actions/checkout@v7
@@ -22,7 +17,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '${{ matrix.php-version }}'
+          # The version of the website, see website/castor.php
+          php-version: '8.5'
           tools: castor
 
       - name: Validate composer.json and composer.lock

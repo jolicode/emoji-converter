@@ -73,7 +73,7 @@ over “chat”).
 
 ## Development
 
-You need PHP 8.4+ with intl, Composer, [Castor](https://castor.jolicode.com/),
+You need PHP 8.5+ with intl, Composer, [Castor](https://castor.jolicode.com/),
 and Docker with Buildx.
 
 ```bash
