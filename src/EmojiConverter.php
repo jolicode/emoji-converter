@@ -79,15 +79,19 @@ final class EmojiConverter
                 continue;
             }
 
-            // Names are lowercase, but the word may start a sentence
+            // Grow a candidate from this word, part by part, as long as it can
+            // still be a name
             $match = null;
             $candidate = '';
+            // Names are lowercase, but the word may start a sentence
             $lowerCandidate = self::lowerFirst($keys[$i]);
             for ($j = $i; $j < $count && \strlen($candidate .= $keys[$j]) <= $maxLength; ++$j) {
                 if ($j > $i) {
                     $lowerCandidate .= $keys[$j];
                 }
                 if (1 === $j % 2 && null !== $emoji = $emojiByName[$candidate] ?? $emojiByName[$lowerCandidate] ?? null) {
+                    // Do not stop, so the last match is the longest name:
+                    // "chat noir" overrides "chat"
                     $match = [$j, $emoji];
                 }
             }
