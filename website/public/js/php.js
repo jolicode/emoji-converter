@@ -13,6 +13,10 @@ const CATALOG_DIR = '/app/vendor/symfony/emoji/Resources/data';
 
 const buildUrl = (path) => new URL(`../build/${path}`, import.meta.url);
 
+// The catalogs that symfony/emoji can convert back to emoji, the others are
+// converted back with their names. Keep in sync with src/EmojiConverter.php
+export const SHORTCODE_CATALOGS = ['github', 'gitlab', 'slack', 'text'];
+
 // The scripts write their result in a file, so the outputs only get PHP errors
 const php = await createPhpModule({
     // Without it, php-web.data is resolved relative to the page, see
@@ -43,7 +47,7 @@ export async function fromEmoji(catalog, text) {
 }
 
 export async function toEmoji(catalog, text) {
-    await loadCatalogFile(`${catalog}-emoji`);
+    await loadCatalogFile(SHORTCODE_CATALOGS.includes(catalog) ? `${catalog}-emoji` : `emoji-${catalog}`);
 
     return convert({ direction: 'to-emoji', catalog, text });
 }

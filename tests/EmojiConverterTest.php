@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(EmojiConverter::class)]
 class EmojiConverterTest extends TestCase
 {
-    public function testFromEmoji()
+    public function testFromEmoji(): void
     {
         $converter = new EmojiConverter();
 
@@ -19,7 +19,7 @@ class EmojiConverterTest extends TestCase
         $this->assertSame('a !!', $converter->fromEmoji('strip', 'a 🐱!!'));
     }
 
-    public function testToEmoji()
+    public function testToEmoji(): void
     {
         $converter = new EmojiConverter();
 
@@ -27,7 +27,7 @@ class EmojiConverterTest extends TestCase
         $this->assertSame('a 👍🏽!!', $converter->toEmoji('slack', 'a :+1::skin-tone-4:!!'));
     }
 
-    public function testBadCatalog()
+    public function testBadCatalog(): void
     {
         $converter = new EmojiConverter();
 
@@ -36,12 +36,21 @@ class EmojiConverterTest extends TestCase
         $converter->fromEmoji('team', 'a 🐱!!');
     }
 
-    public function testToEmojiWithLocale()
+    public function testToEmojiWithNames(): void
     {
         $converter = new EmojiConverter();
 
-        $this->expectException(\IntlException::class);
+        $this->assertSame('a 🐱!!', $converter->toEmoji('fr', 'a tête de chat!!'));
+        $this->assertSame('Un 🐈‍⬛ au 🏰, pas un achat', $converter->toEmoji('fr', 'Un chat noir au château, pas un achat'));
+        $this->assertSame('🐘 et 🐈', $converter->toEmoji('fr', 'Éléphant et Chat'));
+        $this->assertSame('👍🏽 🇫🇷', $converter->toEmoji('fr', 'pouce vers le haut : peau légèrement mate drapeau : France'));
+        $this->assertSame('a 🐱 🐈', $converter->toEmoji('en', 'a cat face cat'));
+    }
 
-        $converter->toEmoji('fr', 'a tête de chat!!');
+    public function testToEmojiWithStrip(): void
+    {
+        $converter = new EmojiConverter();
+
+        $this->assertSame('a cat', $converter->toEmoji('strip', 'a cat'));
     }
 }

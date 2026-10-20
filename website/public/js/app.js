@@ -7,9 +7,6 @@ const textTitleElt = document.getElementById('text-title');
 const engineElt = document.getElementById('engine');
 const arrowElt = document.getElementById('arrow');
 
-// The only catalogs that can convert back to emoji
-const SHORTCODE_CATALOGS = ['github', 'gitlab', 'slack', 'text'];
-
 let php;
 try {
     php = await import('./php.js');
@@ -67,7 +64,7 @@ function addLocales() {
         .filter((name) => name.startsWith('emoji-'))
         .map((name) => name.slice('emoji-'.length))
         // "root" is the CLDR root locale, its names are codes like "E10-494"
-        .filter((catalog) => catalog !== 'root' && catalog !== 'strip' && !SHORTCODE_CATALOGS.includes(catalog))
+        .filter((catalog) => catalog !== 'root' && catalog !== 'strip' && !php.SHORTCODE_CATALOGS.includes(catalog))
         .map((catalog) => new Option(languageNames.of(catalog.replaceAll('_', '-')), catalog))
         .sort((a, b) => a.text.localeCompare(b.text))
     ;
@@ -103,8 +100,9 @@ function currentCatalog() {
 function changeCatalog() {
     const catalog = currentCatalog();
 
-    textElt.readOnly = !SHORTCODE_CATALOGS.includes(catalog);
-    if (SHORTCODE_CATALOGS.includes(catalog)) {
+    // Removed emoji cannot come back
+    textElt.readOnly = catalog === 'strip';
+    if (php.SHORTCODE_CATALOGS.includes(catalog)) {
         textTitleElt.textContent = 'Shortcodes';
     } else if (catalog === 'strip') {
         textTitleElt.textContent = 'The void';

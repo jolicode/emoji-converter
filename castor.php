@@ -10,7 +10,7 @@ use function Castor\run;
 Castor\import(__DIR__ . '/website/castor.php');
 
 #[AsTask(description: 'Install dependencies')]
-function install()
+function install(): void
 {
     run(['composer', 'install']);
 }

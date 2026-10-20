@@ -8,8 +8,8 @@
 ![Emoji on the left, GitHub shortcodes on the right, and a PHP elephant in the middle](docs/desktop.png)
 
 Emoji Converter converts emoji to shortcodes (GitHub, GitLab, Slack, text), to
-their names in 136 languages, or to nothing at all, and shortcodes back to
-emoji. The conversion is done by [symfony/emoji](https://symfony.com/doc/current/emoji.html),
+their names in 136 languages, or to nothing at all, and back to emoji. The
+conversion is done by [symfony/emoji](https://symfony.com/doc/current/emoji.html),
 in PHP, in your browser: there is no server, your text never leaves the tab.
 
 <p align="center">
@@ -62,10 +62,13 @@ $converter = new EmojiConverter();
 $converter->fromEmoji('github', 'Hello 👋 🐘'); // Hello :wave: :elephant:
 $converter->fromEmoji('fr', 'Hello 👋 🐘'); // Hello signe de la main éléphant
 $converter->toEmoji('slack', 'Hello :wave: :elephant:'); // Hello 👋 🐘
+$converter->toEmoji('fr', 'Un chat noir, pas un achat'); // Un 🐈‍⬛, pas un achat
 ```
 
-Only the shortcode catalogs (`github`, `gitlab`, `slack`, `text`) can convert
-back to emoji.
+symfony/emoji only converts shortcodes back to emoji: names are ordinary words,
+replacing them with `strtr()` would also replace them inside other words. The
+converter replaces whole words only, and prefers the longest name (“chat noir”
+over “chat”).
 
 ## Development
 

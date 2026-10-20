@@ -141,8 +141,9 @@ Deploying on Friday 🔥🧯</textarea>
                 <details>
                     <summary>Can names go back to emoji?</summary>
                     <p>
-                        No, only shortcodes do. “pouce vers le haut : peau légèrement mate”
-                        stays a thumb, a skin tone, and a mystery.
+                        Yes, but symfony/emoji does not do it: names are ordinary words.
+                        We only replace whole words, and the longest name wins: “un chat
+                        noir” becomes “un 🐈‍⬛”, but “un achat” stays a purchase.
                     </p>
                 </details>
             </div>
