@@ -1,0 +1,50 @@
+
+name: Build the public website, and publish to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # Keep in sync with website/castor.php
+      - name: Build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: website/Dockerfile
+          outputs: type=local,dest=website/public/build
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # buildx creates the output directory with 0700, Pages rejects it
+      - name: Fix permissions
+        run: chmod -R a+rX website/public/build
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: 'website/public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

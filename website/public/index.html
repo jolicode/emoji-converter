@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Emoji Converter</title>
+        <meta name="description" content="Convert emoji to shortcodes or names, and back, with a whole PHP interpreter compiled to WebAssembly. For no good reason.">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐘</text></svg>">
+        <link rel="preload" href="./fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="stylesheet" href="./css/app.css">
+        <script src="./js/app.js" type="module"></script>
+    </head>
+
+    <body class="is-loading">
+        <div class="ticker" aria-hidden="true">
+            <div class="ticker__track">
+                <p>Now with 100% more PHP ✦ A whole interpreter to call strtr() ✦ ICU included, ICU data not ✦ No server was harmed ✦ Works offline, probably ✦ Each conversion boots PHP from scratch ✦</p>
+                <p>Now with 100% more PHP ✦ A whole interpreter to call strtr() ✦ ICU included, ICU data not ✦ No server was harmed ✦ Works offline, probably ✦ Each conversion boots PHP from scratch ✦</p>
+            </div>
+        </div>
+
+        <header class="hero">
+            <p class="hero__kicker">An over-engineered experiment by <a href="https://jolicode.com/">JoliCode</a></p>
+            <h1 class="hero__title">
+                <span class="hero__word">Emoji</span>
+                <span class="hero__code">:converter:</span>
+            </h1>
+            <p class="hero__lead">
+                Turn 🐘 into <code>:elephant:</code> and back, with a whole PHP interpreter
+                compiled to WebAssembly, running in your browser. Because we could.
+            </p>
+            <a class="button" href="https://github.com/jolicode/emoji-converter">View the source, if you dare</a>
+            <p class="hero__badge" aria-hidden="true">
+                <strong>100% serverless*</strong>
+                <span>*the server is your browser</span>
+            </p>
+        </header>
+
+        <main class="machine">
+            <fieldset class="dialects">
+                <legend class="dialects__legend">Translate to</legend>
+                <label class="pill"><input type="radio" name="mode" value="github" checked disabled><span>GitHub</span></label>
+                <label class="pill"><input type="radio" name="mode" value="gitlab" disabled><span>GitLab</span></label>
+                <label class="pill"><input type="radio" name="mode" value="slack" disabled><span>Slack</span></label>
+                <label class="pill"><input type="radio" name="mode" value="text" disabled><span>Text</span></label>
+                <label class="pill pill--names">
+                    <input type="radio" name="mode" value="names" disabled>
+                    <span>
+                        Names in
+                        <select id="locale" aria-label="Language of the names" disabled></select>
+                    </span>
+                </label>
+                <label class="pill"><input type="radio" name="mode" value="strip" disabled><span>The void</span></label>
+            </fieldset>
+
+            <output id="status" class="status" role="status">⚙️ Booting PHP, downloading a whole interpreter…</output>
+
+            <div class="panes">
+                <section class="pane pane--emoji">
+                    <header class="pane__header">
+                        <h2><label for="emoji">Emoji</label></h2>
+                        <button type="button" class="pane__copy" data-copy="emoji">Copy</button>
+                    </header>
+                    <textarea id="emoji" spellcheck="false" disabled>Hello 👋 We ❤️ PHP 🐘 and WebAssembly 🚀
+Deploying on Friday 🔥🧯</textarea>
+                </section>
+
+                <div class="engine" aria-hidden="true">
+                    <span class="engine__mascot" id="engine">🐘</span>
+                    <span class="engine__arrow" id="arrow">→</span>
+                </div>
+
+                <section class="pane pane--text">
+                    <header class="pane__header">
+                        <h2><label for="text" id="text-title">Shortcodes</label></h2>
+                        <span class="pane__readonly">Read only</span>
+                        <button type="button" class="pane__copy" data-copy="text">Copy</button>
+                    </header>
+                    <textarea id="text" spellcheck="false" disabled></textarea>
+                </section>
+            </div>
+
+            <div class="samples">
+                <span class="samples__label">No inspiration?</span>
+                <button type="button" class="sample" disabled>🍕 + 🍍 = 😡</button>
+                <button type="button" class="sample" disabled>☕ → 💻 → 🐛 → 😭</button>
+                <button type="button" class="sample" disabled>It works on my machine 🤷</button>
+                <button type="button" class="sample" disabled>👨‍👩‍👧 🏳️‍🌈 🇫🇷 👍🏽</button>
+            </div>
+        </main>
+
+        <section class="stats" aria-labelledby="stats-title">
+            <h2 class="section-title" id="stats-title">Very serious metrics</h2>
+            <dl class="stats__grid">
+                <div class="stat">
+                    <dt>PHP version, with intl, in this very tab</dt>
+                    <dd id="stat-php">…</dd>
+                </div>
+                <div class="stat">
+                    <dt>PHP requests served by your browser</dt>
+                    <dd id="stat-requests">0</dd>
+                </div>
+                <div class="stat">
+                    <dt>To boot PHP, convert, and shut it down</dt>
+                    <dd id="stat-duration">…</dd>
+                </div>
+                <div class="stat">
+                    <dt>Of WebAssembly, to call <code>strtr()</code></dt>
+                    <dd id="stat-wasm">…</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="faq" aria-labelledby="faq-title">
+            <h2 class="section-title" id="faq-title">Questions nobody asked</h2>
+            <div class="faq__list">
+                <details>
+                    <summary>Is this a joke?</summary>
+                    <p>
+                        Mostly. <a href="https://symfony.com/doc/current/emoji.html">symfony/emoji</a>
+                        does the job with a good old <code>strtr()</code>. We shipped a whole PHP
+                        interpreter to your browser to call it.
+                    </p>
+                </details>
+                <details>
+                    <summary>Does my text go anywhere?</summary>
+                    <p>
+                        Nowhere. There is no server: PHP runs in this tab, and boots from
+                        scratch for every single conversion.
+                    </p>
+                </details>
+                <details>
+                    <summary>What is it made of?</summary>
+                    <p>
+                        PHP and <span id="icu-version">ICU</span>, compiled to
+                        WebAssembly with Emscripten. The intl extension is there because
+                        symfony/emoji needs the <code>\Transliterator</code> class. Only the class:
+                        the 30 MB of ICU data stayed home.
+                    </p>
+                </details>
+                <details>
+                    <summary>Can names go back to emoji?</summary>
+                    <p>
+                        No, only shortcodes do. “pouce vers le haut : peau légèrement mate”
+                        stays a thumb, a skin tone, and a mystery.
+                    </p>
+                </details>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>
+                Made with 🐘 and questionable decisions by <a href="https://jolicode.com/">JoliCode</a>.
+                <a href="https://github.com/jolicode/emoji-converter">Source on GitHub</a>, MIT license.
+            </p>
+        </footer>
+    </body>
+</html>

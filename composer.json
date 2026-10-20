@@ -1,0 +1,30 @@
+{
+    "name": "jolicode/emoji-converter",
+    "description": "Convert code to emoji",
+    "type": "project",
+    "license": "MIT",
+    "keywords": ["emoji", "converter"],
+    "authors": [
+        {
+            "name": "Grégoire Pineau",
+            "email": "lyrixx@lyrixx.info"
+        }
+    ],
+    "require": {
+        "symfony/emoji": "^8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.4"
+    },
+    "autoload": {
+        "psr-4": { "EmojiConverter\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": { "EmojiConverter\\Tests\\": "tests" }
+    },
+    "config": {
+        "bump-after-update": true,
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
