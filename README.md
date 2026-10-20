@@ -28,7 +28,7 @@ intl extension for the browser, which is the actually hard part.
 ## How it works
 
 PHP is compiled by [php-wasm-builder](https://github.com/lyrixx/php-wasm-builder),
-and [`castor website:build`](website/castor.php) puts everything in
+and [`castor app:build`](website/castor.php) puts everything in
 `website/public/build/`:
 
 * `php-web.wasm` and `php-web.mjs`: PHP 8.5 with the intl extension, compiled
@@ -74,13 +74,14 @@ over “chat”).
 ## Development
 
 You need PHP 8.5+ with intl, Composer, [Castor](https://castor.jolicode.com/),
-and Docker with Buildx.
+Docker with Buildx, and Node.js 24+.
 
 ```bash
-castor install        # Install the dependencies
-castor tests          # Run the tests
-castor website:build  # Build PHP WebAssembly with the application
-castor website:serve  # Serve the website on http://localhost:9999
+castor app:install  # Install the dependencies
+castor app:tests    # Run the tests
+castor app:build    # Build PHP WebAssembly with the application
+castor app:smoke    # Check that what is built boots, and that the page converts
+castor app:serve    # Serve the website on http://localhost:9999
 ```
 
 The first build takes a few minutes (ICU and PHP are compiled), then only the
