@@ -27,14 +27,15 @@ intl extension for the browser, which is the actually hard part.
 
 ## How it works
 
-The [Dockerfile](website/Dockerfile) builds everything in `website/public/build/`:
+PHP is compiled by [php-wasm-builder](https://github.com/lyrixx/php-wasm-builder),
+and [`castor app:build`](website/castor.php) puts everything in
+`website/public/build/`:
 
 * `php-web.wasm` and `php-web.mjs`: PHP 8.5 with the intl extension, compiled
-  with Emscripten. ICU is statically linked, so there is no `intl.so` to load
-  with `dlopen()`: it compiles WebAssembly synchronously, which Chrome refuses
-  on the main thread;
-* `php-web.data`: the application (`src/`, `website/src/` and `vendor/`),
-  mounted in `/app`;
+  with Emscripten, and the application (`src/`, `website/src/` and `vendor/`),
+  embedded in `/app`. ICU is statically linked, so there is no `intl.so` to
+  load with `dlopen()`: it compiles WebAssembly synchronously, which Chrome
+  refuses on the main thread;
 * `emoji/`: the catalogs of symfony/emoji. They weigh ~37 MB, so the page only
   fetches the ones it needs (see [php.js](website/public/js/php.js)).
 
@@ -45,7 +46,7 @@ The ICU data (~30 MB) is not shipped: symfony/emoji only needs the
 For each conversion, the page writes the request in `/tmp/request.json`, runs
 [`website/src/convert.php`](website/src/convert.php), and reads the result in
 `/tmp/response.txt`. PHP is started and shut down on each conversion, see
-[phpw.c](website/phpw.c).
+`phpw()` in [phpw.c](https://github.com/lyrixx/php-wasm-builder/blob/main/phpw.c).
 
 Fibers and `proc_open()` are not supported: Emscripten does not provide the
 functions they rely on.
@@ -72,19 +73,22 @@ over “chat”).
 
 ## Development
 
-You need PHP 8.4+ with intl, Composer, [Castor](https://castor.jolicode.com/),
-and Docker with Buildx.
+You need PHP 8.5+ with intl, Composer, [Castor](https://castor.jolicode.com/),
+Docker with Buildx, and Node.js 24+.
 
 ```bash
-castor install        # Install the dependencies
-castor tests          # Run the tests
-castor website:build  # Build PHP WebAssembly with the application
-castor website:serve  # Serve the website on http://localhost:9999
+castor app:install  # Install the dependencies
+castor app:tests    # Run the tests
+castor qa:cs        # Fix coding standards
+castor qa:phpstan   # Run PHPStan
+castor app:build    # Build PHP WebAssembly with the application
+castor app:smoke    # Check that what is built boots, and that the page converts
+castor app:serve    # Serve the website on http://localhost:9999
 ```
 
 The first build takes a few minutes (ICU and PHP are compiled), then only the
 application is packed again. The website is deployed on GitHub Pages on each
-push on `main`.
+push on `main`, once the tests pass.
 
 ## License
 

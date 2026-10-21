@@ -2,27 +2,28 @@
 
 defined('CASTOR_USE_CHDIR') || define('CASTOR_USE_CHDIR', true);
 
+use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
 
-use function Castor\exit_code;
-use function Castor\run;
+use function app\install_if_needed;
+use function Castor\PHPQa\php_cs_fixer;
+use function Castor\PHPQa\phpstan;
 
 Castor\import(__DIR__ . '/website/castor.php');
 
-#[AsTask(description: 'Install dependencies')]
-function install(): void
-{
-    run(['composer', 'install']);
+#[AsTask(name: 'cs', namespace: 'qa', description: 'Fix coding standards')]
+function qa_cs(
+    #[AsOption(description: 'Only show what would be fixed, as the CI does')]
+    bool $dryRun = false,
+): void {
+    php_cs_fixer(arguments: ['fix', ...($dryRun ? ['--dry-run', '--diff'] : [])], version: '3.95.27');
 }
 
-#[AsTask(description: 'Run tests')]
-function tests(): int
+#[AsTask(name: 'phpstan', namespace: 'qa', description: 'Run PHPStan')]
+function qa_phpstan(): void
 {
-    return exit_code(['vendor/bin/phpunit']);
-}
+    // It reads the classes of vendor/
+    install_if_needed();
 
-#[AsTask(description: 'Fix coding standards')]
-function cs(): int
-{
-    return exit_code(['php-cs-fixer', 'fix']);
+    phpstan(arguments: ['analyse'], version: '2.3.1');
 }

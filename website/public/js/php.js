@@ -6,8 +6,8 @@ const INFO_SCRIPT = '/app/website/src/info.php';
 const REQUEST_FILE = '/tmp/request.json';
 const RESPONSE_FILE = '/tmp/response.txt';
 
-// The catalogs of symfony/emoji are not packed with the application (see
-// website/Dockerfile): they are fetched when needed, and written where
+// The catalogs of symfony/emoji are not embedded with the application (see
+// website/castor.php): they are fetched when needed, and written where
 // symfony/emoji looks for them.
 const CATALOG_DIR = '/app/vendor/symfony/emoji/Resources/data';
 
@@ -17,13 +17,11 @@ const buildUrl = (path) => new URL(`../build/${path}`, import.meta.url);
 // converted back with their names. Keep in sync with src/EmojiConverter.php
 export const SHORTCODE_CATALOGS = ['github', 'gitlab', 'slack', 'text'];
 
-// The scripts write their result in a file, so the outputs only get PHP errors
+// The scripts write their result in a file, so the outputs only get PHP errors.
+// phpw() ends each run with an empty line on both, to flush them.
 const php = await createPhpModule({
-    // Without it, php-web.data is resolved relative to the page, see
-    // https://github.com/emscripten-core/emscripten/issues/21289
-    locateFile: (path) => buildUrl(path).href,
-    print: (line) => console.error(line),
-    printErr: (line) => console.error(line),
+    print: (line) => line && console.error(line),
+    printErr: (line) => line && console.error(line),
 });
 
 php.FS.mkdirTree(CATALOG_DIR);
@@ -60,7 +58,7 @@ function convert(request) {
 
 function run(script) {
     const start = performance.now();
-    const status = php.ccall('phpw_run', 'number', ['string'], [script]);
+    const status = php.ccall('phpw', 'number', ['string'], [script]);
     lastDuration = performance.now() - start;
     requestCount++;
 

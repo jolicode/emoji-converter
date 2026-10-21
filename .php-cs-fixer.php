@@ -2,6 +2,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
+    // A copy of the application, see website/castor.php
+    ->exclude('build')
     ->append([
         __FILE__,
     ])
