@@ -79,6 +79,8 @@ Docker with Buildx, and Node.js 24+.
 ```bash
 castor app:install  # Install the dependencies
 castor app:tests    # Run the tests
+castor qa:cs        # Fix coding standards
+castor qa:phpstan   # Run PHPStan
 castor app:build    # Build PHP WebAssembly with the application
 castor app:smoke    # Check that what is built boots, and that the page converts
 castor app:serve    # Serve the website on http://localhost:9999

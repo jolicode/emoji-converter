@@ -30,6 +30,9 @@ function tests(): int
     return exit_code(['vendor/bin/phpunit']);
 }
 
+/**
+ * @param list<string> $set
+ */
 #[AsTask(description: 'Build PHP WebAssembly with the application, in public/build')]
 function build(
     #[AsOption(description: 'Override a value of the bake file, as "docker buildx bake --set" does (the CI gives the cache this way), can be repeated', mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY)]

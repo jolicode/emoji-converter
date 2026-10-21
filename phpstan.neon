@@ -1,0 +1,13 @@
+parameters:
+    # From 7, the false that preg_*(), glob()… return on a failure is to handle
+    level: 6
+    paths:
+        - castor.php
+        - src
+        - tests
+        - website
+    # The castor tasks use castor, and the castor packages
+    scanFiles:
+        - .castor.stub.php
+    bootstrapFiles:
+        - .castor/vendor/autoload.php

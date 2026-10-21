@@ -6,6 +6,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 use EmojiConverter\EmojiConverter;
 
+/** @var array{direction: 'from-emoji'|'to-emoji', catalog: string, text: string} $request */
 $request = json_decode(file_get_contents('/tmp/request.json'), true, flags: \JSON_THROW_ON_ERROR);
 
 $converter = new EmojiConverter();

@@ -24,8 +24,11 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+      - name: Check coding standards
+        run: castor qa:cs --dry-run
+
+      - name: Run PHPStan
+        run: castor qa:phpstan
 
       - name: Run tests
         run: castor app:tests
