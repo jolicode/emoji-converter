@@ -88,7 +88,7 @@ castor app:serve    # Serve the website on http://localhost:9999
 
 The first build takes a few minutes (ICU and PHP are compiled), then only the
 application is packed again. The website is deployed on GitHub Pages on each
-push on `main`.
+push on `main`, once the tests pass.
 
 ## License
 
