@@ -43,10 +43,12 @@ The ICU data (~30 MB) is not shipped: symfony/emoji only needs the
 `\Transliterator` class. Anything else that needs the ICU data (`Collator`,
 `NumberFormatter`, `IntlDateFormatter`…) fails.
 
-For each conversion, the page writes the request in `/tmp/request.json`, runs
-[`website/src/convert.php`](website/src/convert.php), and reads the result in
-`/tmp/response.txt`. PHP is started and shut down on each conversion, see
-`phpw()` in [phpw.c](https://github.com/lyrixx/php-wasm-builder/blob/main/phpw.c).
+For each conversion, the page runs
+[`website/src/convert.php`](website/src/convert.php) with `runFile()`, gives
+it the request on stdin, and gets the result on stdout, and the errors on
+stderr. PHP is started and shut down on each conversion, see the
+[JavaScript API](https://github.com/lyrixx/php-wasm-builder#javascript-api) of
+php-wasm-builder.
 
 Fibers and `proc_open()` are not supported: Emscripten does not provide the
 functions they rely on.

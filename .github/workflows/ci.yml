@@ -59,7 +59,7 @@ jobs:
             --set "*.cache-from=type=gha" \
             --set "*.cache-to=type=gha,mode=max,ignore-error=true"
 
-      # The version php-wasm-builder runs its checks and page.mjs on
+      # The version php-wasm-builder runs its checks and fetch-files.mjs on
       - uses: actions/setup-node@v7
         with:
           node-version: 24

@@ -1,10 +1,8 @@
-import createPhpModule from '../build/php-web.mjs';
+import createPhp from '../build/php-web.mjs';
 
-// Keep in sync with website/src/convert.php and website/src/info.php
+// Where website/castor.php embeds them
 const CONVERT_SCRIPT = '/app/website/src/convert.php';
 const INFO_SCRIPT = '/app/website/src/info.php';
-const REQUEST_FILE = '/tmp/request.json';
-const RESPONSE_FILE = '/tmp/response.txt';
 
 // The catalogs of symfony/emoji are not embedded with the application (see
 // website/castor.php): they are fetched when needed, and written where
@@ -17,12 +15,7 @@ const buildUrl = (path) => new URL(`../build/${path}`, import.meta.url);
 // converted back with their names. Keep in sync with src/EmojiConverter.php
 export const SHORTCODE_CATALOGS = ['github', 'gitlab', 'slack', 'text'];
 
-// The scripts write their result in a file, so the outputs only get PHP errors.
-// phpw() ends each run with an empty line on both, to flush them.
-const php = await createPhpModule({
-    print: (line) => line && console.error(line),
-    printErr: (line) => line && console.error(line),
-});
+const php = await createPhp();
 
 php.FS.mkdirTree(CATALOG_DIR);
 
@@ -36,7 +29,7 @@ export const wasmSize = performance.getEntriesByName(buildUrl('php-web.wasm').hr
 
 export const catalogFileNames = await fetchJson(buildUrl('emoji/index.json'));
 
-export const versions = JSON.parse(run(INFO_SCRIPT));
+export const versions = JSON.parse(await run(INFO_SCRIPT));
 
 export async function fromEmoji(catalog, text) {
     await loadCatalogFile(`emoji-${catalog}`);
@@ -51,22 +44,26 @@ export async function toEmoji(catalog, text) {
 }
 
 function convert(request) {
-    php.FS.writeFile(REQUEST_FILE, JSON.stringify(request));
-
-    return run(CONVERT_SCRIPT);
+    return run(CONVERT_SCRIPT, JSON.stringify(request));
 }
 
-function run(script) {
+/**
+ * The scripts write their result on stdout, and their errors on stderr.
+ */
+async function run(script, stdin = '') {
     const start = performance.now();
-    const status = php.ccall('phpw', 'number', ['string'], [script]);
+    const { exitCode, stdout, stderr } = await php.runFile(script, { stdin });
     lastDuration = performance.now() - start;
     requestCount++;
 
-    if (status !== 0) {
-        throw new Error(`PHP exited with status ${status}, see the console for details.`);
+    if (stderr) {
+        console.error(stderr);
+    }
+    if (exitCode !== 0) {
+        throw new Error(`PHP exited with status ${exitCode}, see the console for details.`);
     }
 
-    return php.FS.readFile(RESPONSE_FILE, { encoding: 'utf8' });
+    return stdout;
 }
 
 function loadCatalogFile(name) {
