@@ -4,7 +4,8 @@ import { test } from 'node:test';
 import * as php from '../public/js/php.js';
 
 // Runs public/js/php.js in node, on what `castor app:build` built. Run with
-// `castor app:smoke`: page.mjs of php-wasm-builder lets node fetch the files.
+// `castor app:smoke`: fetch-files.mjs of php-wasm-builder lets node fetch the
+// files.
 
 test('converts emoji', async () => {
     assert.equal(await php.fromEmoji('github', 'Hello 👋 🐘'), 'Hello :wave: :elephant:');

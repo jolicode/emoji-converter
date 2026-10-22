@@ -117,7 +117,7 @@ function wasm_stack(): Stack
         // symfony/emoji only needs the \Transliterator class, the conversion
         // itself is done with strtr()
         ->icuData('none')
-        ->embed('build/app', 'app')
+        ->embed('build/app', at: '/app')
         ->targets('web')
         ->outputDir('website/public/build')
     ;
