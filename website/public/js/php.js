@@ -34,17 +34,21 @@ export const versions = JSON.parse(await run(INFO_SCRIPT));
 export async function fromEmoji(catalog, text) {
     await loadCatalogFile(`emoji-${catalog}`);
 
-    return convert({ direction: 'from-emoji', catalog, text });
+    return (await convert({ direction: 'from-emoji', catalog, text })).text;
 }
 
+/**
+ * Returns the text, and the shortcodes that are not in the catalog, with the
+ * known ones that look like them: { text, unknownShortcodes: [{ shortcode, suggestions }] }.
+ */
 export async function toEmoji(catalog, text) {
     await loadCatalogFile(SHORTCODE_CATALOGS.includes(catalog) ? `${catalog}-emoji` : `emoji-${catalog}`);
 
     return convert({ direction: 'to-emoji', catalog, text });
 }
 
-function convert(request) {
-    return run(CONVERT_SCRIPT, JSON.stringify(request));
+async function convert(request) {
+    return JSON.parse(await run(CONVERT_SCRIPT, JSON.stringify(request)));
 }
 
 /**

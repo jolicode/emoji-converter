@@ -50,7 +50,7 @@
 
         <main class="machine">
             <fieldset class="dialects">
-                <legend class="dialects__legend">Translate to</legend>
+                <legend class="dialects__legend">Convert between emoji and</legend>
                 <label class="pill"><input type="radio" name="mode" value="github" checked disabled><span>GitHub</span></label>
                 <label class="pill"><input type="radio" name="mode" value="gitlab" disabled><span>GitLab</span></label>
                 <label class="pill"><input type="radio" name="mode" value="slack" disabled><span>Slack</span></label>
@@ -84,11 +84,12 @@ Deploying on Friday 🔥🧯</textarea>
 
                 <section class="pane pane--text">
                     <header class="pane__header">
-                        <h2><label for="text" id="text-title">Shortcodes</label></h2>
+                        <h2><label for="text" id="text-title">GitHub shortcodes</label></h2>
                         <span class="pane__readonly">Read only</span>
                         <button type="button" class="pane__copy" data-copy="text">Copy</button>
                     </header>
                     <textarea id="text" spellcheck="false" disabled></textarea>
+                    <div id="unknown-shortcodes" class="pane__unknown-shortcodes" role="status"></div>
                 </section>
             </div>
 
