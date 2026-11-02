@@ -13,8 +13,15 @@ test('converts emoji', async () => {
 });
 
 test('converts back to emoji', async () => {
-    assert.equal(await php.toEmoji('slack', 'Hello :wave: :elephant:'), 'Hello 👋 🐘');
-    assert.equal(await php.toEmoji('fr', 'Un chat noir, pas un achat'), 'Un 🐈‍⬛, pas un achat');
+    assert.deepEqual(await php.toEmoji('slack', 'Hello :wave: :elephant:'), { text: 'Hello 👋 🐘', unknownShortcodes: [] });
+    assert.deepEqual(await php.toEmoji('fr', 'Un chat noir, pas un achat'), { text: 'Un 🐈‍⬛, pas un achat', unknownShortcodes: [] });
+});
+
+test('finds unknown shortcodes', async () => {
+    assert.deepEqual(await php.toEmoji('github', 'Hello :wave: :elephnt:'), {
+        text: 'Hello 👋 :elephnt:',
+        unknownShortcodes: [{ shortcode: ':elephnt:', suggestions: [':elephant:'] }],
+    });
 });
 
 test('reads the size of the .wasm file', () => {

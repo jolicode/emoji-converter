@@ -45,8 +45,8 @@ The ICU data (~30 MB) is not shipped: symfony/emoji only needs the
 
 For each conversion, the page runs
 [`website/src/convert.php`](website/src/convert.php) with `runFile()`, gives
-it the request on stdin, and gets the result on stdout, and the errors on
-stderr. PHP is started and shut down on each conversion, see the
+it the request on stdin, and gets the result on stdout as JSON, and the
+errors on stderr. PHP is started and shut down on each conversion, see the
 [JavaScript API](https://github.com/lyrixx/php-wasm-builder#javascript-api) of
 php-wasm-builder.
 
@@ -66,6 +66,9 @@ $converter->fromEmoji('github', 'Hello 👋 🐘'); // Hello :wave: :elephant:
 $converter->fromEmoji('fr', 'Hello 👋 🐘'); // Hello signe de la main éléphant
 $converter->toEmoji('slack', 'Hello :wave: :elephant:'); // Hello 👋 🐘
 $converter->toEmoji('fr', 'Un chat noir, pas un achat'); // Un 🐈‍⬛, pas un achat
+
+// [new UnknownShortcode(':elephnt:', suggestions: [':elephant:'])]
+$converter->findUnknownShortcodes('github', 'Hello :wave: :elephnt:');
 ```
 
 symfony/emoji only converts shortcodes back to emoji: names are ordinary words,

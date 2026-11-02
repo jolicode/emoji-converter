@@ -4,6 +4,7 @@ const localeElt = document.getElementById('locale');
 const emojiElt = document.getElementById('emoji');
 const textElt = document.getElementById('text');
 const textTitleElt = document.getElementById('text-title');
+const unknownShortcodesElt = document.getElementById('unknown-shortcodes');
 const engineElt = document.getElementById('engine');
 const arrowElt = document.getElementById('arrow');
 
@@ -20,6 +21,7 @@ try {
 addLocales();
 
 let lastConversion = 0;
+let shownUnknownShortcodes = '[]';
 
 for (const modeElt of modeElts) {
     modeElt.addEventListener('change', changeCatalog);
@@ -91,8 +93,12 @@ function selectNames() {
     changeCatalog();
 }
 
+function checkedModeElt() {
+    return document.querySelector('input[name="mode"]:checked');
+}
+
 function currentCatalog() {
-    const mode = document.querySelector('input[name="mode"]:checked').value;
+    const mode = checkedModeElt().value;
 
     return mode === 'names' ? localeElt.value : mode;
 }
@@ -102,19 +108,25 @@ function changeCatalog() {
 
     // Removed emoji cannot come back
     textElt.readOnly = catalog === 'strip';
+    // Says what the pane holds, whatever the direction: "GitHub shortcodes",
+    // "Names in French"…
     if (php.SHORTCODE_CATALOGS.includes(catalog)) {
-        textTitleElt.textContent = 'Shortcodes';
+        textTitleElt.textContent = `${checkedModeElt().labels[0].textContent} shortcodes`;
     } else if (catalog === 'strip') {
         textTitleElt.textContent = 'The void';
     } else {
-        textTitleElt.textContent = 'Names';
+        textTitleElt.textContent = `Names in ${localeElt.selectedOptions[0].text}`;
     }
 
     convertEmoji();
 }
 
 function convertEmoji() {
-    update(textElt, '→', () => php.fromEmoji(currentCatalog(), emojiElt.value));
+    update(textElt, '→', async () => ({
+        text: await php.fromEmoji(currentCatalog(), emojiElt.value),
+        // We wrote them, they are all known
+        unknownShortcodes: [],
+    }));
 }
 
 function convertText() {
@@ -143,11 +155,68 @@ async function update(targetElt, arrow, convert) {
         return;
     }
 
-    targetElt.value = result;
+    targetElt.value = result.text;
+    showUnknownShortcodes(result.unknownShortcodes);
     arrowElt.textContent = arrow;
     statusElt.textContent = '';
     statusElt.classList.remove('status--error');
     shakeEngine();
+}
+
+function showUnknownShortcodes(unknownShortcodes) {
+    // The region is live: even the same content would be announced again by
+    // screen readers, on each key typed
+    const json = JSON.stringify(unknownShortcodes);
+    if (json === shownUnknownShortcodes) {
+        return;
+    }
+    shownUnknownShortcodes = json;
+
+    const orList = new Intl.ListFormat('en', { type: 'disjunction' });
+
+    unknownShortcodesElt.replaceChildren(...unknownShortcodes.map(({ shortcode, suggestions }) => {
+        const lineElt = document.createElement('p');
+        lineElt.append('🤔 Unknown shortcode ', codeElt(shortcode), '.');
+        if (suggestions.length > 0) {
+            lineElt.append(' Did you mean ');
+            let groupElt;
+            for (const part of orList.formatToParts(suggestions)) {
+                if (part.type === 'element') {
+                    // With the punctuation after it, so a line does not start with ", or"
+                    groupElt = document.createElement('span');
+                    groupElt.className = 'pane__suggestion-group';
+                    groupElt.append(suggestionElt(shortcode, part.value));
+                    lineElt.append(groupElt);
+                } else {
+                    groupElt.append(part.value);
+                }
+            }
+            groupElt.append('?');
+        }
+
+        return lineElt;
+    }));
+}
+
+function codeElt(text) {
+    const elt = document.createElement('code');
+    elt.textContent = text;
+
+    return elt;
+}
+
+function suggestionElt(shortcode, suggestion) {
+    const elt = document.createElement('button');
+    elt.type = 'button';
+    elt.className = 'pane__suggestion';
+    elt.append(codeElt(suggestion));
+    elt.addEventListener('click', () => {
+        textElt.value = textElt.value.replaceAll(shortcode, suggestion);
+        textElt.focus();
+        convertText();
+    });
+
+    return elt;
 }
 
 function updateStats() {

@@ -374,7 +374,9 @@ button:disabled {
 @media (min-width: 800px) {
     .panes {
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        align-items: center;
+        /* The unknown shortcodes make the pane of the right grow, the pane
+           of the left does not move */
+        align-items: start;
     }
 }
 
@@ -453,6 +455,52 @@ button:disabled {
     background: var(--yellow);
 }
 
+.pane__unknown-shortcodes {
+    padding: 10px 14px;
+    border-top: var(--border);
+    background: var(--yellow);
+    font-family: var(--font-mono);
+    font-size: .875rem;
+    line-height: 1.8;
+}
+
+.pane__unknown-shortcodes:empty {
+    display: none;
+}
+
+.pane__unknown-shortcodes p {
+    margin: 0;
+}
+
+.pane__unknown-shortcodes code {
+    background: rgb(13 11 26 / .12);
+}
+
+.pane__suggestion-group {
+    white-space: nowrap;
+}
+
+.pane__suggestion {
+    padding: 0 8px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pane__suggestion:hover {
+    background: var(--mint);
+}
+
+.pane__suggestion code {
+    padding: 0;
+    background: none;
+    font: inherit;
+}
+
 textarea {
     display: block;
     width: 100%;
@@ -492,6 +540,7 @@ textarea:disabled {
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    align-self: center;
     justify-self: center;
 }
 
