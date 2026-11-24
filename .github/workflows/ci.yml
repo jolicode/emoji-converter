@@ -18,7 +18,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           # The version of the website, see website/castor.php
-          php-version: '8.5'
+          php-version: '8.6'
           tools: castor
 
       - name: Validate composer.json and composer.lock

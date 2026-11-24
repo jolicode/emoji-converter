@@ -114,7 +114,7 @@ function build_if_needed(): void
 function wasm_stack(): Stack
 {
     return Stack::named('website')
-        ->php('8.5.12')
+        ->php('8.6.0')
         ->extensions('intl')
         // symfony/emoji only needs the \Transliterator class, the conversion
         // itself is done with strtr()
