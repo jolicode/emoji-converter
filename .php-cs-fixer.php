@@ -11,6 +11,9 @@ $finder = PhpCsFixer\Finder::create()
 
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
+    // It knows the syntax up to PHP 8.5, and the CI runs PHP 8.6, the version of
+    // the website. The code uses none of the syntax of PHP 8.6
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setRules([
         '@PHP81Migration' => true,
         '@PhpCsFixer' => true,
