@@ -4,7 +4,9 @@ namespace app;
 
 use Castor\Attribute\AsOption;
 use Castor\Attribute\AsTask;
+use PhpWasm\IcuData;
 use PhpWasm\Stack;
+use PhpWasm\Target;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Castor\context;
@@ -104,7 +106,7 @@ function install_if_needed(): void
  */
 function build_if_needed(): void
 {
-    if (!is_file(wasm_stack()->artifact('web', 'wasm'))) {
+    if (!is_file(wasm_stack()->artifact(Target::Web, 'wasm'))) {
         build();
     }
 }
@@ -112,13 +114,13 @@ function build_if_needed(): void
 function wasm_stack(): Stack
 {
     return Stack::named('website')
-        ->php('8.5.12')
+        ->php('8.6.0')
         ->extensions('intl')
         // symfony/emoji only needs the \Transliterator class, the conversion
         // itself is done with strtr()
-        ->icuData('none')
+        ->icuData(IcuData::None)
         ->embed('build/app', at: '/app')
-        ->targets('web')
+        ->targets(Target::Web)
         ->outputDir('website/public/build')
     ;
 }
