@@ -47,7 +47,7 @@ For each conversion, the page runs
 [`website/src/convert.php`](website/src/convert.php) with `runFile()`, gives
 it the request on stdin, and gets the result on stdout as JSON, and the
 errors on stderr. PHP is started and shut down on each conversion, see the
-[JavaScript API](https://github.com/lyrixx/php-wasm-builder#javascript-api) of
+[JavaScript API](https://lyrixx.github.io/php-wasm-builder/javascript-api/) of
 php-wasm-builder.
 
 Fibers and `proc_open()` are not supported: Emscripten does not provide the
